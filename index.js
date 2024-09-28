@@ -15,9 +15,18 @@ const db = new pg.Client({
   ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false, // SSL for production
 });
 
-db.connect()
-  .then(() => console.log("Connected to PostgreSQL database"))
-  .catch(err => console.error("Failed to connect to the database", err));
+// Connect to the database with error handling
+const connectToDatabase = async () => {
+  try {
+    await db.connect();
+    console.log("Connected to PostgreSQL database");
+  } catch (err) {
+    console.error("Failed to connect to the database", err);
+    process.exit(1); // Exit the process if database connection fails
+  }
+};
+
+connectToDatabase();
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static("public"));
@@ -112,6 +121,7 @@ app.post("/new", async (req, res) => {
   }
 });
 
-app.listen(port, () => {
+// Listen on the correct port and IP address
+app.listen(port, '0.0.0.0', () => {
   console.log(`Server running on http://localhost:${port}`);
 });
