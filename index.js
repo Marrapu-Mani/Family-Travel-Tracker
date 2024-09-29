@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Create a new PostgreSQL client using the DATABASE_URL from environment variables
 const db = new pg.Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: false, // Disable SSL
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
 // Connect to the database with error handling
@@ -28,7 +28,9 @@ const connectToDatabase = async () => {
 
 connectToDatabase();
 
+app.set("view engine", "ejs");
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());  // Add this for JSON parsing
 app.use(express.static("public"));
 
 let currentUserId = 1;
@@ -39,17 +41,27 @@ let users = [
 ];
 
 async function checkVisited() {
-  const result = await db.query(
-    "SELECT country_code FROM visited_countries JOIN users ON users.id = user_id WHERE user_id = $1;",
-    [currentUserId]
-  );
-  return result.rows.map(country => country.country_code);
+  try {
+    const result = await db.query(
+      "SELECT country_code FROM visited_countries JOIN users ON users.id = user_id WHERE user_id = $1;",
+      [currentUserId]
+    );
+    return result.rows.map(country => country.country_code);
+  } catch (err) {
+    console.error("Error fetching visited countries", err);
+    throw err;
+  }
 }
 
 async function getCurrentUser() {
-  const result = await db.query("SELECT * FROM users");
-  users = result.rows;
-  return users.find(user => user.id == currentUserId);
+  try {
+    const result = await db.query("SELECT * FROM users");
+    users = result.rows;
+    return users.find(user => user.id == currentUserId);
+  } catch (err) {
+    console.error("Error fetching users", err);
+    throw err;
+  }
 }
 
 app.get("/", async (req, res) => {

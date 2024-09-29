@@ -1,22 +1,24 @@
 {
   "name": "8.3-travel-tracker",
   "version": "1.0.0",
-  "description": "",
+  "description": "A travel tracker app using Node.js and PostgreSQL",
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node index.js",
-    "dev": "nodemon index.js",
+    "start": "node index.js",   
+    "dev": "nodemon index.js",  
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["travel", "nodejs", "express", "postgresql"],
+  "author": "Your Name",
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.20.2",
     "ejs": "^3.1.9",
     "express": "^4.18.2",
-    "nodemon": "^3.1.7",
     "pg": "^8.11.3"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.7"
   }
 }
