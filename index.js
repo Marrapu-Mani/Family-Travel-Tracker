@@ -12,7 +12,7 @@ const port = process.env.PORT || 3000;
 // Create a new PostgreSQL client using the DATABASE_URL from environment variables
 const db = new pg.Client({
   connectionString: process.env.DATABASE_URL,
-  ssl: false,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
 // Connect to the database with error handling
